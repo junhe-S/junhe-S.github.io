@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="John Ho">
+
+
+    <meta name="subtitle" content="One who loves the world">
+
+
+    <meta name="description" content="Generate electricity from love.">
+
+
+    <meta name="keywords" content="python">
+
+
+<title>（入门）如何用markdown编写文章 | John Ho&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/img/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">John Ho&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">John Ho&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">（入门）如何用markdown编写文章</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">John Ho</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">May 30, 2020&nbsp;&nbsp;17:02:25</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="常见数学公式"><a href="#常见数学公式" class="headerlink" title="常见数学公式"></a>常见数学公式</h2><style type="text/css">
+    table{
+        text-align: center;
+    }
+</style>
+
+<center>
+<table>
+  <tr>
+   <th>符号(symbol)</th>
+   <th>代码(code)</th>
+   <th>描述(decription)</th>
+  </tr>
+  <tr>
+   <td>$\sum$</td>
+   <td><code>$\sum$</code></td>
+   <td>求和公式</td>
+  </tr>
+  <tr>
+   <td>$\sum_{i=0}^n$</td>
+   <td><code>$\sum_{i=0}^n$</code></td>
+   <td>求和上下标</td>
+  </tr>
+  <tr>
+   <td>$\times$</td>
+   <td><code>$\times$</code></td>
+   <td>乘号</td>
+  </tr>
+  <tr>
+   <td>$\pm$</td>
+   <td><code>$\pm$</code></td>
+   <td>正负号</td>
+  </tr>
+  <tr>
+   <td>$\div$</td>
+   <td><code>$\div$</code></td>
+   <td>除号</td>
+  </tr>
+  <tr>
+   <td>$\mid$</td>
+   <td><code>$\mid$</code></td>
+   <td>竖线</td>
+  </tr>
+  <tr>
+   <td>$\cdot$</td>
+   <td><code>$\cdot$</code></td>
+   <td>点</td>
+  </tr>
+  <tr>
+   <td>$\circ$</td>
+   <td><code>$\circ$</code></td>
+   <td>圈</td>
+  </tr>
+  <tr>
+   <td>$\ast$</td>
+   <td><code>$\ast$</code></td>
+   <td>星号</td>
+  </tr>
+  <tr>
+   <td>$\bigotimes$</td>
+   <td><code>$\bigotimes$</code></td>
+   <td>克罗内克积</td>
+  </tr>
+  <tr>
+   <td>$\bigoplus$</td>
+   <td><code>$\bigoplus$</code></td>
+   <td>异或</td>
+  </tr>
+  <tr>
+   <td>$\leq$</td>
+   <td><code>$\leq$</code></td>
+   <td>小于等于</td>
+  </tr>
+  <tr>
+   <td>$\geq$</td>
+   <td><code>$\geq$</code></td>
+   <td>大于等于</td>
+  </tr>
+  <tr>
+   <td>$\neq$</td>
+   <td><code>$\neq$</code></td>
+   <td>不等于</td>
+  </tr>
+  <tr>
+   <td>$\approx$</td>
+   <td><code>$\approx$</code></td>
+   <td>约等于</td>
+  </tr>
+  <tr>
+   <td>$\prod$</td>
+   <td><code>$\prod$</code></td>
+   <td>N元乘积</td>
+  </tr>
+  <tr>
+   <td>$\coprod$</td>
+   <td><code>$\coprod$</code></td>
+   <td>N元余积</td>
+  </tr>
+  <tr>
+   <td>$\cdots$</td>
+   <td><code>$\cdots$</code></td>
+   <td>省略号</td>
+  </tr>
+  <tr>
+   <td>$\int$</td>
+   <td><code>$\int$</code></td>
+   <td>积分</td>
+  </tr>
+  <tr>
+   <td>$\iint$</td>
+   <td><code>$\iint$</code></td>
+   <td>双重积分</td>
+  </tr>
+  <tr>
+   <td>$\oint$</td>
+   <td><code>$\oint$</code></td>
+   <td>曲线积分</td>
+  </tr>
+  <tr>
+   <td>$\infty$</td>
+   <td><code>$\infty$</code></td>
+   <td>无穷</td>
+  </tr>
+  <tr>
+   <td>$\nabla$</td>
+   <td><code>$\nabla$</code></td>
+   <td>梯度</td>
+  </tr>
+  <tr>
+   <td>$\because$</td>
+   <td><code>$\because$</code></td>
+   <td>因为</td>
+  </tr>
+  <tr>
+   <td>$\therefore$</td>
+   <td><code>$\therefore$</code></td>
+   <td>所以</td>
+  </tr>
+  <tr>
+   <td>$\forall$</td>
+   <td><code>$\forall$</code></td>
+   <td>任意</td>
+  </tr>
+  <tr>
+   <td>$\exists$</td>
+   <td><code>$\exists$</code></td>
+   <td>存在</td>
+  </tr>
+  <tr>
+   <td>$\not>$</td>
+   <td><code>$\not>$</code></td>
+   <td>不大于</td>
+  </tr>
+  <tr>
+   <td>$\not\subset$</td>
+   <td><code>$\not\subset$</code></td>
+   <td>不属于</td>
+  </tr>
+  <tr>
+   <td>$\emptyset$</td>
+   <td><code>$\emptyset$</code></td>
+   <td>空集</td>
+  </tr>
+  <tr>
+   <td>$\in$</td>
+   <td><code>$\in$</code></td>
+   <td>属于</td>
+  </tr>
+  <tr>
+   <td>$\notin$</td>
+   <td><code>$\notin$</code></td>
+   <td>不属于</td>
+  </tr>
+  <tr>
+   <td>$\subset$</td>
+   <td><code>$\subset$</code></td>
+   <td>子集</td>
+  </tr>
+  <tr>
+   <td>$\subseteq$</td>
+   <td><code>$\subseteq$</code></td>
+   <td>真子集</td>
+  </tr>
+  <tr>
+   <td>$\bigcup$</td>
+   <td><code>$\bigcup$</code></td>
+   <td>并集</td>
+  </tr>
+  <tr>
+   <td>$\bigcap$</td>
+   <td><code>$\bigcap$</code></td>
+   <td>交集</td>
+  </tr>
+  <tr>
+   <td>$\bigvee$</td>
+   <td><code>$\bigvee$</code></td>
+   <td>    逻辑或</td>
+  </tr>
+  <tr>
+   <td>$\bigwedge$</td>
+   <td><code>$\bigwedge$</code></td>
+   <td>逻辑与</td>
+  </tr>
+  <tr>
+   <td>$\biguplus$</td>
+   <td><code>$\biguplus$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\bigsqcup$</td>
+   <td><code>$\bigsqcup$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\hat{y}$</td>
+   <td><code>$\hat{y}$</code></td>
+   <td>期望值</td>
+  </tr>
+  <tr>
+   <td>$\check{y}$</td>
+   <td><code>$\check{y}$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\breve{y}$</td>
+   <td><code>$\breve{y}$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\overline{a+b+c+d}$</td>
+   <td><code>$\overline{a+b+c+d}$</code></td>
+   <td>平均值</td>
+  </tr>
+  <tr>
+   <td>$\underline{a+b+c+d}$</td>
+   <td><code>$\underline{a+b+c+d}$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\overbrace{a+\underbrace{b+c}_{1.0}+d}^{2.0}$</td>
+   <td><code>$\overbrace{a+\underbrace{b+c}_{1.0}+d}^{2.0}$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\uparrow$</td>
+   <td><code>$\uparrow$</code></td>
+   <td>向上</td>
+  </tr>
+  <tr>
+   <td>$\Uparrow$</td>
+   <td><code>$\Uparrow$</code></td>
+   <td>向上</td>
+  </tr>
+  <tr>
+   <td>$\downarrow$</td>
+   <td><code>$\Downarrow$</code></td>
+   <td>向下</td>
+  </tr>
+  <tr>
+   <td>$\Downarrow$</td>
+   <td><code>$\uparrow$</code></td>
+   <td>向下</td>
+  </tr>
+  <tr>
+   <td>$\rightarrow$</td>
+   <td><code>$\rightarrow$</code></td>
+   <td>向右</td>
+  </tr>
+  <tr>
+   <td>$\Rightarrow$</td>
+   <td><code>$\Downarrow$</code></td>
+   <td>向右</td>
+  </tr>
+  <tr>
+   <td>$\longrightarrow$</td>
+   <td><code>$\longrightarrow$</code></td>
+   <td>向右长箭头</td>
+  </tr>
+  <tr>
+   <td>$\Longrightarrow$</td>
+   <td><code>$\Longrightarrow$</code></td>
+   <td>向右长箭头</td>
+  </tr>
+  <tr>
+   <td>$\leftarrow$</td>
+   <td><code>$\leftarrow$</code></td>
+   <td>向左</td>
+  </tr>
+  <tr>
+   <td>$\Leftarrow$</td>
+   <td><code>$\Leftarrow$</code></td>
+   <td>向左</td>
+  </tr>
+  <tr>
+   <td>$\longleftarrow$</td>
+   <td><code>$\longleftarrow$</code></td>
+   <td>向左长箭头</td>
+  </tr>
+  <tr>
+   <td>$\Longleftarrow$</td>
+   <td><code>$\Longleftarrow$</code></td>
+   <td>向左长箭头</td>
+  </tr>
+  <tr>
+   <td>$\alpha$</td>
+   <td><code>$\alpha$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\beta$</td>
+   <td><code>$\beta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\gamma$</td>
+   <td><code>$\gamma$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Gamma$</td>
+   <td><code>$\Gamma$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\delta$</td>
+   <td><code>$\delta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Delta$</td>
+   <td><code>$\Delta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\epsilon$</td>
+   <td><code>$\epsilon$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\varepsilon$</td>
+   <td><code>$\varepsilon$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\zeta$</td>
+   <td><code>$\zeta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\eta$</td>
+   <td><code>$\eta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\theta$</td>
+   <td><code>$\theta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Theta$</td>
+   <td><code>$\Theta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\vartheta$</td>
+   <td><code>$\vartheta$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\iota$</td>
+   <td><code>$\iota$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\pi$</td>
+   <td><code>$\pi$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\phi$</td>
+   <td><code>$\phi$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Phi$</td>
+   <td><code>$\Phi$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\psi$</td>
+   <td><code>$\psi$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Psi$</td>
+   <td><code>$\Psi$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\omega$</td>
+   <td><code>$\omega$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Omega$</td>
+   <td><code>$\Omega$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\chi$</td>
+   <td><code>$\chi$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\rho$</td>
+   <td><code>$\rho$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\omicron$</td>
+   <td><code>$\omicron$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\sigma$</td>
+   <td><code>$\sigma$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Sigma$</td>
+   <td><code>$\Sigma$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\nu$</td>
+   <td><code>$\nu$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\xi$</td>
+   <td><code>$\xi$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\tau$</td>
+   <td><code>$\tau$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\lambda$</td>
+   <td><code>$\lambda$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\Lambda$</td>
+   <td><code>$\Lambda$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\mu$</td>
+   <td><code>$\mu$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\partial$</td>
+   <td><code>$\partial$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\lbrace \rbrace$</td>
+   <td><code>$\lbrace \rbrace$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\langle \rangle$</td>
+   <td><code>$\langle \rangle$</code></td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>$\overline{a}$</td>
+   <td><code>$\overline{a}$</code></td>
+   <td></td>
+  </tr>
+</table>
+</center>
+
+<h2 id="常见分数表示法："><a href="#常见分数表示法：" class="headerlink" title="常见分数表示法："></a>常见分数表示法：</h2><p><code>$\frac{a}{b}$</code></p>
+<script type="math/tex; mode=display">\frac{a}{b} \tag{1}</script><p><code>${a}\over {b}$</code></p>
+<script type="math/tex; mode=display">x' = {x - vt \over \sqrt{1 - {v^2 \over c^2}}} \tag{2}</script><h2 id="常见函数表示法："><a href="#常见函数表示法：" class="headerlink" title="常见函数表示法："></a>常见函数表示法：</h2><p><code>$f(x)=ax+b$</code></p>
+<script type="math/tex; mode=display">f(x)=ax+b \tag{3}</script><!-- 检测：
+$$lim_{1\to+\infty}P(|\frac{1}{n}\sum_i^nX_i-\mu|<\epsilon)=1, i=1,...,n$$  
+
+<code>$lim_{1\to+\infty}P(|\frac{1}{n}\sum_i^nX_i-\mu|<\epsilon)=1, i=1,...,n$</code> -->
+<p>待补充</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>John Ho</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://github.com/junhe-S/junhe-S.github.io/2020/05/30/how_to_use_markdown(1)/">https://github.com/junhe-S/junhe-S.github.io/2020/05/30/how_to_use_markdown(1)/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/markdown/"># markdown</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© John Ho | Powered by Hexo & Chic</span>
+    </div>
+</footer>
+
+    </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"position":"right","width":200,"height":420},"mobile":{"show":false},"log":false});</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end --></body>
+</html>
