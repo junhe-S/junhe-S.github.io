@@ -246,8 +246,11 @@
             <style type="text/css">
    .red-text{color:red;}
    p.ql{text-align: left;font-size: 20px;font-family: new time roman;font-style: italic;}
+   p.ql2{text-align: left;font-size: 20px;font-family: new time roman;font-style: italic;color: blue}
    p.qr{text-align: right;font-size: 20px;font-family: new time roman;font-style: italic;}
-   p.h1{text-align: left;font-size: 20px;font-family: new time roman;}
+   ul.h1{text-align: left;font-size: 20px;font-family: new time roman;}
+   ul.h2{list-style-type: '- ';text-align: left;font-size: 20px;font-family: new time roman;}
+   li.h1{list-style-type: none; font-size: 20px;font-family: new time roman;}
    a.sourceLine { display: inline-block; line-height: 1.25; }
    a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
    a.sourceLine:empty { height: 1.2em; }
@@ -302,17 +305,19 @@
 
 <h2 id="Stochastic-Process"><a href="#Stochastic-Process" class="headerlink" title="Stochastic Process"></a>Stochastic Process</h2><blockquote>
     <p class="ql">A collection of random variables</p>
-    <p style="color: red">$$\lbrace X(t):t\in T \rbrace$$</p>
-    <p class="qr">, where T  is an index set</p>
-    <p class="h1">Other names:</p>
+    <p>$$\lbrace X(t):t\in T \rbrace$$</p>
+    <p class="qr">where T is an index set</p>
+    <p class="ql2">Other names:</p>
     <ul style="list-style-type:square;line-height:180%">
         <li>
             <span class="red-text">times series&nbsp;&nbsp;</span>(if T is time)
             <ul>called continuous or discrete 
-                <span class="red-text">based on the index set</span>
+                <span>based on the index set</span>
             </ul>
         </li>
-        <li>random function</li>
+        <li>
+            <span class="red-text">random function</span>
+        </li>
     </ul>
 <!--     <p class="h1">Example index sets T:</p>
     <ol>
@@ -321,14 +326,15 @@
     <li>$(0,\infty)$</li>
     <li>$(-\infty,\infty)$</li>
     </ol> -->
-    <p class="h1">Typical Notation</p>
+    <p class="ql2">Typical Notation</p>
     <ul>
         <li>$X(t)$ denotes continuous time series</li>
         <li>$X_t$ denotes discrete time series </li>
     </ul>
 <!--     <p class="h1">Recall</p> -->
     <ul>
-        <li>Random variable $X$
+        <li>
+            <p class="ql2">Random variable $X$</p>
             <ul style="list-style-type: square;">
                 <li>function whose value depends on $\omega \in \Omega$</li>
                 <li>observed value, $x$, of the $r.v. X$ is the value of this function at the observed $\omega \lbrace i.e. x = X(w)\rbrace$</li>
@@ -337,7 +343,7 @@
     </ul>
     <ul>
         <li>
-            Realization $x(t)$
+            <p class="ql2">Realization $x(t)$</p>
             <ul style="list-style-type: square;">
                 <li>
                     the set of real-valued outcomes $\lbrace x_t ; t \in T\rbrace$ for a fixed value of $w$ in the sample space, $i.e. x_t = X_t(w)$
@@ -355,6 +361,47 @@
         </li>
     </ul>
 </blockquote>
+
+<p class="ql">Appendix</p>
+
+<hr>
+<blockquote>
+    <ul>
+        <p class="ql2">Ensemble</p>
+        <ul class="h2">
+            <li>totality of all realizations</li>
+        </ul>
+    </ul>
+    <ul>
+        <p class="ql2">Mean of $X_t$</p>
+        <ul class="h2">
+            <li>ensemble average of process at time t</li>
+            <p>$$E[X_t]=\mu_t$$</p>
+        </ul>
+    </ul>
+    <ul>
+        <p class="ql2">Variance of $X_t$</p>
+        <ul class="h2">
+            <p>$$var[X_t]=\sigma_t^2$$</p>
+        </ul>
+    </ul>
+    <ul>
+        <p class="ql2">Autocovariance function</p>
+        <ul class="h2">
+            <p>$$cov [ X_{t_1} , X_{t_2}]=E[(X_{t_1} - \mu_{t_1})(X_{t_2} - \mu_{t_2})]= \gamma (t_1 , t_2)$$</p>
+        </ul>
+    </ul>
+    <ul>
+        <p class="ql2">Autocorrelation function</p>
+        <ul class="h2">
+            <p>$$\rho (t_1 , t_2)=\frac{\gamma (t_1 , t_2)}{\sigma_{t_1}\sigma_{t_2}}$$</p>
+        </ul>
+    </ul>
+</blockquote>
+
+
+
+
 
 
 
