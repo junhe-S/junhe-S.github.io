@@ -199,11 +199,11 @@
     然后设置模型里的 $\beta_0$,$\beta_1$，这里要设置成 0.5, 0.5, -0.02, 5。
     <pre style="background-color: #f5f5f5">beta = np.array([0.5, 0.5, -0.02, 5.])</pre>
     由此，我们"点乘"，生成反应项真实值 $Y(t)$。
-    <pre style="background-color: #f5f5f5">y = np.dot(X, beta) + e</pre>
+    <pre style="background-color: #f5f5f5">y_true = np.dot(X, beta)</pre>
     生成拟合值$Y(t)$
     <pre style="background-color: #f5f5f5">y = y_true + sig * np.random.normal(size=nsample)</pre>
     然后获取拟合结果。
-    <pre style="background-color: #f5f5f5">results = model.fit()</pre>
+    <pre style="background-color: #f5f5f5">res = sm.OLS(y, X).fit()</pre>
     回归系数。
     <pre style="background-color: #f5f5f5">print('Parameters: ', res.params)</pre>
     得到
