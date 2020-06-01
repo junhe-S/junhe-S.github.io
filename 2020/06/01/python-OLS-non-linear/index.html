@@ -18,7 +18,7 @@
     <meta name="keywords" content="python">
 
 
-<title>python_OLS | John Ho&#39;s Blog</title>
+<title>python_OLS_non_linear | John Ho&#39;s Blog</title>
 
 
 
@@ -158,7 +158,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">python_OLS</h1>
+            <h1 class="post-title">python_OLS_non_linear</h1>
             
                 <div class="post-meta">
                     
@@ -167,7 +167,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">May 31, 2020&nbsp;&nbsp;23:34:34</a>
+                        Date: <a href="#">June 1, 2020&nbsp;&nbsp;15:20:54</a>
                         </span>
                     
                     
@@ -189,75 +189,97 @@
     <li>endog (endogenous variable)，是上面模型中的 $Y(t)$, 输入是一个长度为 k 的 array。</li>
     <li>exog (exogenous variable), 即模型中的$\beta_0 X_0 + \beta_1 X_1 + \dots +\beta_n X_n $。</li>
     假设回归公式是:
-    $$Y = 1 + 0.1X_1 + 10X_1^2$$
-    每次运行代码时设置相同的seed，则每次生成的随机数也相同，如果不设置seed，则每次生成的随机数都会不一样。
-    <pre style="background-color: #f5f5f5">np.random.seed(9876789)</pre>
-    我们从最简单的一元模型开始，虚构一组数据。首先设定数据量，也就是上面的 k 值。
+    $$Y = 5 + 0.5X_1 + 0.5sin(X_1) + (X_1 - 5)^2$$
+    设定数据量，也就是上面的 k 值。
     <pre style="background-color: #f5f5f5">nsample = 100</pre>
-    然后创建一个 array，是上面的 $x_1$ 的数据。这里，我们想要 $x_1$ 的值从 0 到 10 等差排列。
-    <pre style="background-color: #f5f5f5">x = np.linspace(0, 10, nsample)</pre>
-    转化数组为矩阵, 额外添加了另一个$x_2$ 。而$x_2 = {x_1^2}$
-    <pre style="background-color: #f5f5f5">X = np.column_stack((x, x**2))</pre>
-    使用 sm.add_constant() 在 array 上加入一列常项1。
-    <pre style="background-color: #f5f5f5">X = sm.add_constant(x)</pre>
-    然后设置模型里的 $\beta_0$,$\beta_1$，这里要设置成 1,0.1,10。
-    <pre style="background-color: #f5f5f5">beta = np.array([1, 0.1, 10])</pre>
-    然后还要在数据中加上误差项，所以生成一个长度为k的正态分布样本。
-    <pre style="background-color: #f5f5f5">e = np.random.normal(size=nsample)</pre>
-    由此，我们"点乘"，生成反应项 $Y(t)$。
+    然后创建一个 array，是上面的 $x_1$ 的数据。这里，我们想要 $x_1$ 的值从 0 到 20 等差排列。
+    <pre style="background-color: #f5f5f5">x = np.linspace(0, 20, nsample)</pre>
+    转化数组为矩阵, 目标自变量：$5 + 0.5X_1 + 0.5sin(X_1) + (X_1 - 5)^2$
+    <pre style="background-color: #f5f5f5">X = np.column_stack((x, np.sin(x), (x-5)**2, np.ones(nsample)))</pre>
+    然后设置模型里的 $\beta_0$,$\beta_1$，这里要设置成 0.5, 0.5, -0.02, 5。
+    <pre style="background-color: #f5f5f5">beta = np.array([0.5, 0.5, -0.02, 5.])</pre>
+    由此，我们"点乘"，生成反应项真实值 $Y(t)$。
     <pre style="background-color: #f5f5f5">y = np.dot(X, beta) + e</pre>
-    好嘞，在反应变量和回归变量上使用 OLS() 函数。
-    <pre style="background-color: #f5f5f5">model = sm.OLS(y,X)</pre>
+    生成拟合值$Y(t)$
+    <pre style="background-color: #f5f5f5">y = y_true + sig * np.random.normal(size=nsample)</pre>
     然后获取拟合结果。
     <pre style="background-color: #f5f5f5">results = model.fit()</pre>
-    再调取计算出的回归系数。
-    <pre style="background-color: #f5f5f5">print(results.params)</pre>
+    回归系数。
+    <pre style="background-color: #f5f5f5">print('Parameters: ', res.params)</pre>
     得到
-    <pre style="background-color: #f5f5f5">[ 1.34233516 -0.04024948 10.01025357]</pre>
+    <pre style="background-color: #f5f5f5">[ 0.47040466  0.2931004  -0.01826292  5.24935422]</pre>
     和实际的回归系数非常接近。
-    <pre style="background-color: #f5f5f5">[1, 0.1, 10]</pre>
-    当然，也可以将回归拟合的摘要全部打印出来。
+    <pre style="background-color: #f5f5f5">[0.5, 0.5, -0.02, 5.]</pre>
+    标准差
+    <pre style="background-color: #f5f5f5">print('Standard errors: ', res.bse)</pre>
+    得到
+    <pre style="background-color: #f5f5f5">[0.02853117 0.11215937 0.00250506 0.18499717]</pre>
+    预测值
+    <pre style="background-color: #f5f5f5">print('Predicted values: ', res.predict())</pre>
+    得到
+    <pre><code>[ 4.79278116  5.17262168  5.52726298  5.84073136  6.10281792  6.31075592
+  6.46967527  6.59175976  6.69424528  6.796588    6.91726779  7.07075203
+  7.26511865  7.50072896  7.77016828  8.05946415  8.35038197  8.62342091
+  8.8610178   9.05043274  9.18584224  9.26929595  9.31037998  9.32464188
+  9.33103621  9.34881043  9.39434252  9.47845015  9.60461339  9.76840293
+  9.95820778 10.15714295 10.34582361 10.50554994 10.62137947 10.68458209
+ 10.69407437 10.65659757 10.58561009 10.49907624 10.41651482 10.3557922
+ 10.33018692 10.34620807 10.4025259  10.49019023 10.594101   10.69548911
+ 10.77500019 10.81587443]</code></pre>
+     和实际值相比
+     <pre><code>[ 4.5         4.98084442  5.42241818  5.79747174  6.08858976  6.29105242
+  6.41361085  6.47704939  6.51077074  6.54796517  6.62015751  6.75202765
+  6.95735574  7.23675814  7.57758613  7.95600411  8.34090568  8.69902434
+  9.0003991   9.22329697  9.35778363  9.40735561  9.38836583  9.32733686
+  9.25660331  9.20899939  9.21246432  9.28545197  9.43389898  9.65024938
+  9.91469599 10.19843472 10.46839697 10.69268271 10.84580159 10.91286091
+ 10.89201244 10.79475611 10.64405059 10.47054122 10.30752511 10.1854805
+ 10.12705925 10.14336524 10.23213001 10.37808548 10.55547244 10.7322727
+ 10.87546961 10.95647263]
+     </code></pre>
+    打印回归拟合的摘要。
     <pre style="background-color: #f5f5f5">print(results.summary())</pre>
     <pre><code>
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:                      y   R-squared:                       1.000
-Model:                            OLS   Adj. R-squared:                  1.000
-Method:                 Least Squares   F-statistic:                 4.020e+06
-Date:                Mon, 01 Jun 2020   Prob (F-statistic):          2.83e-239
-Time:                        12:55:56   Log-Likelihood:                -146.51
-No. Observations:                 100   AIC:                             299.0
-Df Residuals:                      97   BIC:                             306.8
-Df Model:                           2                                         
+Dep. Variable:                      y   R-squared:                       0.920
+Model:                            OLS   Adj. R-squared:                  0.915
+Method:                 Least Squares   F-statistic:                     175.9
+Date:                Mon, 01 Jun 2020   Prob (F-statistic):           3.30e-25
+Time:                        15:51:38   Log-Likelihood:                -38.308
+No. Observations:                  50   AIC:                             84.62
+Df Residuals:                      46   BIC:                             92.26
+Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-const          1.3423      0.313      4.292      0.000       0.722       1.963
-x1            -0.0402      0.145     -0.278      0.781      -0.327       0.247
-x2            10.0103      0.014    715.745      0.000       9.982      10.038
+x1             0.4704      0.029     16.487      0.000       0.413       0.528
+x2             0.2931      0.112      2.613      0.012       0.067       0.519
+x3            -0.0183      0.003     -7.290      0.000      -0.023      -0.013
+const          5.2494      0.185     28.375      0.000       4.877       5.622
 ==============================================================================
-Omnibus:                        2.042   Durbin-Watson:                   2.274
-Prob(Omnibus):                  0.360   Jarque-Bera (JB):                1.875
-Skew:                           0.234   Prob(JB):                        0.392
-Kurtosis:                       2.519   Cond. No.                         144.
+Omnibus:                        1.779   Durbin-Watson:                   2.359
+Prob(Omnibus):                  0.411   Jarque-Bera (JB):                1.440
+Skew:                           0.414   Prob(JB):                        0.487
+Kurtosis:                       2.933   Cond. No.                         221.
 ==============================================================================
 
 Warnings:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
     </code></pre>
-    我们还可以将拟合结果画出来。先调用拟合结果的 fittedvalues 得到拟合的 y 值。
-    <pre style="background-color: #f5f5f5">y_fitted = results.fittedvalues</pre>
-    然后使用 matplotlib.pyploft 画图。首先设定图轴，图片大小为 8×6。
-    <pre style="background-color: #f5f5f5">fig, ax = plt.subplots(figsize=(8,6))</pre>
-    画出原数据，图像为圆点，默认颜色为蓝。
-    <pre style="background-color: #f5f5f5">ax.plot(x, y, 'o', label='data')</pre>
-    画出拟合数据，图像为红色带点间断线。
-    <pre style="background-color: #f5f5f5">ax.plot(x, y_fitted, 'r--.',label='OLS')</pre>
-    <img src="/img/Python_OLS_1.png">
-    加入改变坐标轴区间的指令
-    <pre style="background-color: #f5f5f5">ax.axis((-0.05, 2, -1, 25))</pre>    
-    <img src="/img/Python_OLS_2.png">
+    调用包生成预测值的“置信区间” (prediction standard)
+    <pre style="background-color: #f5f5f5">prstd, iv_l, iv_u = wls_prediction_std(res)</pre>
+    调用matplotlib.pyplot包形成图像
+    <pre style="background-color: #f5f5f5">fig, ax = plt.subplots(figsize=(8,6))
+ax.plot(x, y, 'o', label="data")
+ax.plot(x, y_true, 'b-', label="True")
+ax.plot(x, res.fittedvalues, 'r--.', label="OLS")
+ax.plot(x, iv_u, 'r--')
+ax.plot(x, iv_l, 'r--')
+ax.legend(loc='best')
+plt.show()</pre>
+    <img src="/img/python-OLS-non-linear_1.png">
 </p>
 
 
@@ -265,30 +287,39 @@ Warnings:
 <pre><code style="color: #dbdbdb" >import numpy as np
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
+from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
 
+'''OLS non-linear curve but linear in parameters'''
 np.random.seed(9876789)
-# 每次运行代码时设置相同的seed，则每次生成的随机数也相同，如果不设置seed，则每次生成的随机数都会不一样。
+nsample = 50
+sig = 0.5
+x = np.linspace(0, 20, nsample)
+X = np.column_stack((x, np.sin(x), (x-5)**2, np.ones(nsample)))
+beta = [0.5, 0.5, -0.02, 5.]
 
-'''OLS estimation'''
+y_true = np.dot(X, beta)
+y = y_true + sig * np.random.normal(size=nsample)
 
-nsample = 100
-x = np.linspace(0, 10, nsample)  # 数组：等差数列
-X = np.column_stack((x, x**2))  # 转化数组为矩阵
-beta = np.array([1, 0.1, 10])  # 1*3矩阵
-X = sm.add_constant(X)  # 在 array 上加入一列常项1 注意第一列
-e = np.random.normal(size=nsample)  # 误差项：随机抽取100个服从"标准正态分布"的样本
-y = np.dot(X, beta) + e  # 生成反应项 y(t)
-model = sm.OLS(y, X)  # OLS模型
-results = model.fit()  # 模型拟合
-print('Parameters: ', results.params)  # 回归系数
-print(results.summary())  # 摘要
-print('R2: ', results.rsquared)。
-# 绘图
+res = sm.OLS(y, X).fit()
+print(res.summary())
+
+print('Parameters: ', res.params)
+print('Standard errors: ', res.bse)
+print('Predicted values: ', res.predict())
+
+'''Draw a plot to compare the true relationship to OLS predictions.
+Confidence intervals around the predictions are built using the wls_prediction_std command.'''
+prstd, iv_l, iv_u = wls_prediction_std(res)
+
 fig, ax = plt.subplots(figsize=(8,6))
-y_fitted = results.fittedvalues
+
 ax.plot(x, y, 'o', label="data")
-ax.plot(x, y_fitted, 'r--.',label='OLS')
+ax.plot(x, y_true, 'b-', label="True")
+ax.plot(x, res.fittedvalues, 'r--.', label="OLS")
+ax.plot(x, iv_u, 'r--')
+ax.plot(x, iv_l, 'r--')
+ax.legend(loc='best')
 plt.show()
 </code></pre>
         </div>
@@ -304,7 +335,7 @@ plt.show()
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://github.com/junhe-S/junhe-S.github.io/2020/05/31/python-OLS/">https://github.com/junhe-S/junhe-S.github.io/2020/05/31/python-OLS/</a></span>
+                        <span><a href="https://github.com/junhe-S/junhe-S.github.io/2020/06/01/python-OLS-non-linear/">https://github.com/junhe-S/junhe-S.github.io/2020/06/01/python-OLS-non-linear/</a></span>
                     </p>
                 
                 
@@ -336,10 +367,8 @@ plt.show()
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/06/01/python-OLS-non-linear/">python_OLS_non_linear</a>
             
-            
-            <a class="next" rel="next" href="/2020/05/31/r-language/">Applied Time Series Analysis (ATSA) with R</a>
+            <a class="next" rel="next" href="/2020/05/31/python-OLS/">python_OLS</a>
             
         </section>
 
