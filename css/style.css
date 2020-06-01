@@ -1276,7 +1276,7 @@ header label {
   color: $hight-gutter;
 }
 .post-content figure.highlight pre {
-  background: #23241f;
+  background: #f5f5f5;
   margin: 0;
 }
 .post-content code {
