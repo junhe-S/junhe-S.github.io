@@ -18,7 +18,7 @@
     <meta name="keywords" content="python">
 
 
-<title>python_OLS_non_linear | John Ho&#39;s Blog</title>
+<title>python-OLS_dummy_variables | John Ho&#39;s Blog</title>
 
 
 
@@ -158,7 +158,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">python_OLS_non_linear</h1>
+            <h1 class="post-title">python-OLS_dummy_variables</h1>
             
                 <div class="post-meta">
                     
@@ -167,7 +167,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">June 1, 2020&nbsp;&nbsp;15:20:54</a>
+                        Date: <a href="#">June 1, 2020&nbsp;&nbsp;19:58:07</a>
                         </span>
                     
                     
@@ -184,102 +184,82 @@
 
         <div class="post-content">
             <p>
-    statsmodels.api.OLS (endog, exog, missing, hasconst)
+    statsmodels.api.categorical(data, col=None, dictnames=False, drop=False)
     $$Y = \beta_0 X_0 + \beta_1 X_1 + \dots +\beta_n X_n $$ 
     <li>endog (endogenous variable)，是上面模型中的 $Y(t)$, 输入是一个长度为 k 的 array。</li>
     <li>exog (exogenous variable), 即模型中的$\beta_0 X_0 + \beta_1 X_1 + \dots +\beta_n X_n $。</li>
-    假设回归公式是:
-    $$Y = 5 + 0.5X_1 + 0.5sin(X_1) + (X_1 - 5)^2$$
+    假设一个反应变量 $Y$ 对应连续自变量 $X$ 和一个分类变量 $Z$。其中 $Z_i$ 取值于 {0,1}
+    $$Y = 10 + X + 3Z_1 + (-3)Z_2$$
     设定数据量，也就是上面的 k 值。
     <pre style="background-color: #f5f5f5">nsample = 100</pre>
-    然后创建一个 array，是上面的 $x_1$ 的数据。这里，我们想要 $x_1$ 的值从 0 到 20 等差排列。
+    然后创建一个 groups
+    <pre style="background-color: #f5f5f5">groups = np.zeros(nsample, int)
+groups[20:40] = 1
+groups[40:] = 2</pre>
+    得到
+    <pre><span style="color: red">[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 2 2 2 2 2 2 2 2 2 2]</span></pre>
+     构造dummy variable
+    <pre style="background-color: #f5f5f5">dummy = sm.categorical(groups, drop=True)</pre>
+    生成一个等差数列的“自变量”
     <pre style="background-color: #f5f5f5">x = np.linspace(0, 20, nsample)</pre>
-    转化数组为矩阵, 目标自变量：$5 + 0.5X_1 + 0.5sin(X_1) + (X_1 - 5)^2$
-    <pre style="background-color: #f5f5f5">X = np.column_stack((x, np.sin(x), (x-5)**2, np.ones(nsample)))</pre>
-    然后设置模型里的 $\beta_0$,$\beta_1$，这里要设置成 0.5, 0.5, -0.02, 5。
-    <pre style="background-color: #f5f5f5">beta = np.array([0.5, 0.5, -0.02, 5.])</pre>
-    由此，我们"点乘"，生成反应项真实值 $Y(t)$。
-    <pre style="background-color: #f5f5f5">y_true = np.dot(X, beta)</pre>
-    生成拟合值$Y(t)$
-    <pre style="background-color: #f5f5f5">y = y_true + sig * np.random.normal(size=nsample)</pre>
-    然后获取拟合结果。
-    <pre style="background-color: #f5f5f5">res = sm.OLS(y, X).fit()</pre>
-    回归系数。
-    <pre style="background-color: #f5f5f5">print('Parameters: ', res.params)</pre>
+    构造一个矩阵
+    <pre style="background-color: #f5f5f5">X = np.column_stack((x, dummy[:,1:]))</pre>
+    添加一个“常数项”
+    <pre style="background-color: #f5f5f5">X = sm.add_constant(X, prepend=False)</pre>
+    构造beta系数
+    <pre style="background-color: #f5f5f5">beta = [1., 3, -3, 10]</pre>
     得到
     <pre><span style="color: red">[ 0.47040466  0.2931004  -0.01826292  5.24935422]</span></pre>
-    和实际的回归系数非常接近。
-    <pre><span style="color: red">[0.5, 0.5, -0.02, 5.]</span></pre>
-    标准差
-    <pre style="background-color: #f5f5f5">print('Standard errors: ', res.bse)</pre>
-    得到
-    <pre><span style="color: red">[0.02853117 0.11215937 0.00250506 0.18499717]</span></pre>
-    预测值
-    <pre style="background-color: #f5f5f5">print('Predicted values: ', res.predict())</pre>
-    得到
-    <pre><code>[ 4.79278116  5.17262168  5.52726298  5.84073136  6.10281792  6.31075592
-  6.46967527  6.59175976  6.69424528  6.796588    6.91726779  7.07075203
-  7.26511865  7.50072896  7.77016828  8.05946415  8.35038197  8.62342091
-  8.8610178   9.05043274  9.18584224  9.26929595  9.31037998  9.32464188
-  9.33103621  9.34881043  9.39434252  9.47845015  9.60461339  9.76840293
-  9.95820778 10.15714295 10.34582361 10.50554994 10.62137947 10.68458209
- 10.69407437 10.65659757 10.58561009 10.49907624 10.41651482 10.3557922
- 10.33018692 10.34620807 10.4025259  10.49019023 10.594101   10.69548911
- 10.77500019 10.81587443]</code></pre>
-     和实际值相比
-     <pre><code>[ 4.5         4.98084442  5.42241818  5.79747174  6.08858976  6.29105242
-  6.41361085  6.47704939  6.51077074  6.54796517  6.62015751  6.75202765
-  6.95735574  7.23675814  7.57758613  7.95600411  8.34090568  8.69902434
-  9.0003991   9.22329697  9.35778363  9.40735561  9.38836583  9.32733686
-  9.25660331  9.20899939  9.21246432  9.28545197  9.43389898  9.65024938
-  9.91469599 10.19843472 10.46839697 10.69268271 10.84580159 10.91286091
- 10.89201244 10.79475611 10.64405059 10.47054122 10.30752511 10.1854805
- 10.12705925 10.14336524 10.23213001 10.37808548 10.55547244 10.7322727
- 10.87546961 10.95647263]
-     </code></pre>
+    生成“因变量”
+    <pre style="background-color: #f5f5f5">y_true = np.dot(X, beta)
+e = np.random.normal(size=nsample)
+y = y_true + e</pre>
+    拟合
+    <pre style="background-color: #f5f5f5">res2 = sm.OLS(y, X).fit()</pre>
     打印回归拟合的摘要。
     <pre style="background-color: #f5f5f5">print(results.summary())</pre>
     <pre><code>
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:                      y   R-squared:                       0.920
-Model:                            OLS   Adj. R-squared:                  0.915
-Method:                 Least Squares   F-statistic:                     175.9
-Date:                Mon, 01 Jun 2020   Prob (F-statistic):           3.30e-25
-Time:                        15:51:38   Log-Likelihood:                -38.308
-No. Observations:                  50   AIC:                             84.62
-Df Residuals:                      46   BIC:                             92.26
+Dep. Variable:                      y   R-squared:                       0.968
+Model:                            OLS   Adj. R-squared:                  0.966
+Method:                 Least Squares   F-statistic:                     459.4
+Date:                Mon, 01 Jun 2020   Prob (F-statistic):           2.78e-34
+Time:                        20:21:23   Log-Likelihood:                -73.569
+No. Observations:                  50   AIC:                             155.1
+Df Residuals:                      46   BIC:                             162.8
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-x1             0.4704      0.029     16.487      0.000       0.413       0.528
-x2             0.2931      0.112      2.613      0.012       0.067       0.519
-x3            -0.0183      0.003     -7.290      0.000      -0.023      -0.013
-const          5.2494      0.185     28.375      0.000       4.877       5.622
+x1             0.8866      0.072     12.379      0.000       0.742       1.031
+x2             3.7504      0.680      5.514      0.000       2.381       5.119
+x3            -1.3477      1.108     -1.216      0.230      -3.578       0.883
+const         10.6017      0.371     28.592      0.000       9.855      11.348
 ==============================================================================
-Omnibus:                        1.779   Durbin-Watson:                   2.359
-Prob(Omnibus):                  0.411   Jarque-Bera (JB):                1.440
-Skew:                           0.414   Prob(JB):                        0.487
-Kurtosis:                       2.933   Cond. No.                         221.
+Omnibus:                        1.111   Durbin-Watson:                   2.314
+Prob(Omnibus):                  0.574   Jarque-Bera (JB):                1.155
+Skew:                           0.309   Prob(JB):                        0.561
+Kurtosis:                       2.583   Cond. No.                         96.3
 ==============================================================================
 
 Warnings:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
     </code></pre>
     调用包生成预测值的“置信区间” (prediction standard)
-    <pre style="background-color: #f5f5f5">prstd, iv_l, iv_u = wls_prediction_std(res)</pre>
+    <pre style="background-color: #f5f5f5">prstd, iv_l, iv_u = wls_prediction_std(res2)</pre>
     调用matplotlib.pyplot包形成图像
     <pre style="background-color: #f5f5f5">fig, ax = plt.subplots(figsize=(8,6))
-ax.plot(x, y, 'o', label="data")
+ax.plot(x, y, 'o', label="Data")
 ax.plot(x, y_true, 'b-', label="True")
-ax.plot(x, res.fittedvalues, 'r--.', label="OLS")
+ax.plot(x, res2.fittedvalues, 'r--.', label="Predicted")
 ax.plot(x, iv_u, 'r--')
 ax.plot(x, iv_l, 'r--')
-ax.legend(loc='best')
+legend = ax.legend(loc="best")
 plt.show()</pre>
-    <img src="/img/python-OLS-non-linear_1.png">
+    <img src="/img/python-OLS-dummy-variables_1.png">
 </p>
 
 
@@ -290,36 +270,43 @@ import matplotlib.pyplot as plt
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
 
-'''OLS non-linear curve but linear in parameters'''
-np.random.seed(9876789)
+'''OLS with dummy variables'''
 nsample = 50
-sig = 0.5
+groups = np.zeros(nsample, int)
+groups[20:40] = 1
+groups[40:] = 2
+# dummy = (groups[:,None] == np.unique(groups)).astype(float)
+
+dummy = sm.categorical(groups, drop=True)
 x = np.linspace(0, 20, nsample)
-X = np.column_stack((x, np.sin(x), (x-5)**2, np.ones(nsample)))
-beta = [0.5, 0.5, -0.02, 5.]
+# drop reference category
+X = np.column_stack((x, dummy[:,1:]))
+X = sm.add_constant(X, prepend=False)
 
+beta = [1., 3, -3, 10]
 y_true = np.dot(X, beta)
-y = y_true + sig * np.random.normal(size=nsample)
+e = np.random.normal(size=nsample)
+y = y_true + e
 
-res = sm.OLS(y, X).fit()
-print(res.summary())
+print(X[:5,:])
+print(y[:5])
+print(groups)
+print(dummy[:5,:])
 
-print('Parameters: ', res.params)
-print('Standard errors: ', res.bse)
-print('Predicted values: ', res.predict())
+res2 = sm.OLS(y, X).fit()
+print(res2.summary())
 
-'''Draw a plot to compare the true relationship to OLS predictions.
-Confidence intervals around the predictions are built using the wls_prediction_std command.'''
-prstd, iv_l, iv_u = wls_prediction_std(res)
+'''Draw a plot to compare the true relationship to OLS predictions:'''
+prstd, iv_l, iv_u = wls_prediction_std(res2)
 
 fig, ax = plt.subplots(figsize=(8,6))
 
-ax.plot(x, y, 'o', label="data")
+ax.plot(x, y, 'o', label="Data")
 ax.plot(x, y_true, 'b-', label="True")
-ax.plot(x, res.fittedvalues, 'r--.', label="OLS")
+ax.plot(x, res2.fittedvalues, 'r--.', label="Predicted")
 ax.plot(x, iv_u, 'r--')
 ax.plot(x, iv_l, 'r--')
-ax.legend(loc='best')
+legend = ax.legend(loc="best")
 plt.show()
 </code></pre>
         </div>
@@ -335,7 +322,7 @@ plt.show()
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://github.com/junhe-S/junhe-S.github.io/2020/06/01/python-OLS-non-linear/">https://github.com/junhe-S/junhe-S.github.io/2020/06/01/python-OLS-non-linear/</a></span>
+                        <span><a href="https://github.com/junhe-S/junhe-S.github.io/2020/06/01/python-OLS-dummy-variables/">https://github.com/junhe-S/junhe-S.github.io/2020/06/01/python-OLS-dummy-variables/</a></span>
                     </p>
                 
                 
@@ -367,10 +354,8 @@ plt.show()
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/06/01/python-OLS-dummy-variables/">python-OLS_dummy_variables</a>
             
-            
-            <a class="next" rel="next" href="/2020/05/31/python-OLS/">python_OLS</a>
+            <a class="next" rel="next" href="/2020/06/01/python-OLS-non-linear/">python_OLS_non_linear</a>
             
         </section>
 
