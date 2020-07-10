@@ -18,7 +18,7 @@
     <meta name="keywords" content="python">
 
 
-<title>python_OLS | John Ho&#39;s Blog</title>
+<title>1.Introduction_to_statistical_learning_methods | John Ho&#39;s Blog</title>
 
 
 
@@ -154,11 +154,73 @@
             <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
 
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">python_OLS</h1>
+            <h1 class="post-title">1.Introduction_to_statistical_learning_methods</h1>
             
                 <div class="post-meta">
                     
@@ -167,7 +229,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">May 31, 2020&nbsp;&nbsp;23:34:34</a>
+                        Date: <a href="#">June 7, 2020&nbsp;&nbsp;23:35:26</a>
                         </span>
                     
                     
@@ -183,114 +245,59 @@
         </header>
 
         <div class="post-content">
-            <p>
-    statsmodels.api.OLS (endog, exog, missing, hasconst)
-    $$Y = \beta_0 X_0 + \beta_1 X_1 + \dots +\beta_n X_n $$ 
-    <li>endog (endogenous variable)，是上面模型中的 $Y(t)$, 输入是一个长度为 k 的 array。</li>
-    <li>exog (exogenous variable), 即模型中的$\beta_0 X_0 + \beta_1 X_1 + \dots +\beta_n X_n $。</li>
-    假设回归公式是:
-    $$Y = 1 + 0.1X_1 + 10X_1^2$$
-    每次运行代码时设置相同的seed，则每次生成的随机数也相同，如果不设置seed，则每次生成的随机数都会不一样。
-    <pre style="background-color: #f5f5f5">np.random.seed(9876789)</pre>
-    我们从最简单的一元模型开始，虚构一组数据。首先设定数据量，也就是上面的 k 值。
-    <pre style="background-color: #f5f5f5">nsample = 100</pre>
-    然后创建一个 array，是上面的 $x_1$ 的数据。这里，我们想要 $x_1$ 的值从 0 到 10 等差排列。
-    <pre style="background-color: #f5f5f5">x = np.linspace(0, 10, nsample)</pre>
-    转化数组为矩阵, 额外添加了另一个$x_2$ 。而$x_2 = {x_1^2}$
-    <pre style="background-color: #f5f5f5">X = np.column_stack((x, x**2))</pre>
-    使用 sm.add_constant() 在 array 上加入一列常项1。
-    <pre style="background-color: #f5f5f5">X = sm.add_constant(x)</pre>
-    然后设置模型里的 $\beta_0$,$\beta_1$，这里要设置成 1,0.1,10。
-    <pre style="background-color: #f5f5f5">beta = np.array([1, 0.1, 10])</pre>
-    然后还要在数据中加上误差项，所以生成一个长度为k的正态分布样本。
-    <pre style="background-color: #f5f5f5">e = np.random.normal(size=nsample)</pre>
-    由此，我们"点乘"，生成反应项 $Y(t)$。
-    <pre style="background-color: #f5f5f5">y = np.dot(X, beta) + e</pre>
-    好嘞，在反应变量和回归变量上使用 OLS() 函数。
-    <pre style="background-color: #f5f5f5">model = sm.OLS(y,X)</pre>
-    然后获取拟合结果。
-    <pre style="background-color: #f5f5f5">results = model.fit()</pre>
-    再调取计算出的回归系数。
-    <pre style="background-color: #f5f5f5">print(results.params)</pre>
-    得到
-    <pre style="background-color: #f5f5f5">[ 1.34233516 -0.04024948 10.01025357]</pre>
-    和实际的回归系数非常接近。
-    <pre style="background-color: #f5f5f5">[1, 0.1, 10]</pre>
-    当然，也可以将回归拟合的摘要全部打印出来。
-    <pre style="background-color: #f5f5f5">print(results.summary())</pre>
-    <pre><code>
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:                      y   R-squared:                       1.000
-Model:                            OLS   Adj. R-squared:                  1.000
-Method:                 Least Squares   F-statistic:                 4.020e+06
-Date:                Mon, 01 Jun 2020   Prob (F-statistic):          2.83e-239
-Time:                        12:55:56   Log-Likelihood:                -146.51
-No. Observations:                 100   AIC:                             299.0
-Df Residuals:                      97   BIC:                             306.8
-Df Model:                           2                                         
-Covariance Type:            nonrobust                                         
-==============================================================================
-                 coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------
-const          1.3423      0.313      4.292      0.000       0.722       1.963
-x1            -0.0402      0.145     -0.278      0.781      -0.327       0.247
-x2            10.0103      0.014    715.745      0.000       9.982      10.038
-==============================================================================
-Omnibus:                        2.042   Durbin-Watson:                   2.274
-Prob(Omnibus):                  0.360   Jarque-Bera (JB):                1.875
-Skew:                           0.234   Prob(JB):                        0.392
-Kurtosis:                       2.519   Cond. No.                         144.
-==============================================================================
-
-Warnings:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-    </code></pre>
-    我们还可以将拟合结果画出来。先调用拟合结果的 fittedvalues 得到拟合的 y 值。
-    <pre style="background-color: #f5f5f5">y_fitted = results.fittedvalues</pre>
-    然后使用 matplotlib.pyploft 画图。首先设定图轴，图片大小为 8×6。
-    <pre style="background-color: #f5f5f5">fig, ax = plt.subplots(figsize=(8,6))</pre>
-    画出原数据，图像为圆点，默认颜色为蓝。
-    <pre style="background-color: #f5f5f5">ax.plot(x, y, 'o', label='data')</pre>
-    画出拟合数据，图像为红色带点间断线。
-    <pre style="background-color: #f5f5f5">ax.plot(x, y_fitted, 'r--.',label='OLS')</pre>
-    <img src="/img/Python_OLS_1.png">
-    加入改变坐标轴区间的指令
-    <pre style="background-color: #f5f5f5">ax.axis((-0.05, 2, -1, 25))</pre>    
-    <img src="/img/Python_OLS_2.png">
-</p>
-
-
-<p>整体源代码：</p>
-<pre><code style="color: #dbdbdb" >import numpy as np
-import statsmodels.api as sm
+            <h1 id="第1章-统计学习方法概论"><a href="#第1章-统计学习方法概论" class="headerlink" title="第1章 统计学习方法概论"></a>第1章 统计学习方法概论</h1><p>1．统计学习是关于计算机基于数据构建概率统计模型并运用模型对数据进行分析与预测的一门学科。统计学习包括监督学习、非监督学习、半监督学习和强化学习。<br>2．统计学习方法三要素——模型、策略、算法，对理解统计学习方法起到提纲挈领的作用。<br>3．本书主要讨论监督学习，监督学习可以概括如下：从给定有限的训练数据出发， 假设数据是独立同分布的，而且假设模型属于某个假设空间，应用某一评价准则，从假设空间中选取一个最优的模型，使它对已给训练数据及未知测试数据在给定评价标准意义下有最准确的预测。<br>4．统计学习中，进行模型选择或者说提高学习的泛化能力是一个重要问题。如果只考虑减少训练误差，就可能产生过拟合现象。模型选择的方法有正则化与交叉验证。学习方法泛化能力的分析是统计学习理论研究的重要课题。<br>5．分类问题、标注问题和回归问题都是监督学习的重要问题。本书中介绍的统计学习方法包括感知机、 𝑘<br>k<br> 近邻法、朴素贝叶斯法、决策树、逻辑斯谛回归与最大熵模型、支持向量机、提升方法、EM算法、隐马尔可夫模型和条件随机场。这些方法是主要的分类、标注以及回归方法。它们又可以归类为生成方法与判别方法。</p>
+<h3 id="使用最小二乘法拟和曲线"><a href="#使用最小二乘法拟和曲线" class="headerlink" title="使用最小二乘法拟和曲线"></a>使用最小二乘法拟和曲线</h3><p>高斯于1823年在误差$e_1,…,e_n$独立同分布的假定下,证明了最小二乘方法的一个最优性质: 在所有无偏的线性估计类中,最小二乘方法是其中方差最小的！<br>对于数据$(x_i, y_i)   (i=1, 2, 3…,m)$</p>
+<p>拟合出函数$h(x)$</p>
+<p>有误差，即残差：$r_i=h(x_i)-y_i$</p>
+<p>此时$L2$范数(残差平方和)最小时，$h(x)$ 和 $y$ 相似度最高，更拟合</p>
+<p>一般的$H(x)$为$n$次的多项式，$H(x)=w_0+w_1x+w_2x^2+…w_nx^n$</p>
+<p>$w(w_0,w_1,w_2,…,w_n)$为参数</p>
+<p>最小二乘法就是要找到一组 $w(w_0,w_1,w_2,…,w_n)$ ，使得$\sum_{i=1}^n(h(x_i)-y_i)^2$ (残差平方和) 最小</p>
+<p>即，求 $min\sum_{i=1}^n(h(x_i)-y_i)^2$</p>
+<p>举例：我们用目标函数$y=sin2{\pi}x$, 加上一个正态分布的噪音干扰，用多项式去拟合【例1.1 11页】</p>
+<pre><code style="color: white">import numpy as np
+import scipy as sp
+from scipy.optimize import leastsq
 import matplotlib.pyplot as plt
+%matplotlib inline
+# 目标函数
+def real_func(x):
+    return np.sin(2*np.pi*x)
+
+# 多项式
+def fit_func(p, x):
+    f = np.poly1d(p)
+    return f(x)
+
+# 残差
+def residuals_func(p, x, y):
+    ret = fit_func(p, x) - y
+    return ret# 十个点
+x = np.linspace(0, 1, 10)
+x_points = np.linspace(0, 1, 1000)
+# 加上正态分布噪音的目标函数的值
+y_ = real_func(x)
+y = [np.random.normal(0, 0.1) + y1 for y1 in y_]
 
 
-np.random.seed(9876789)
-# 每次运行代码时设置相同的seed，则每次生成的随机数也相同，如果不设置seed，则每次生成的随机数都会不一样。
+def fitting(M=0):
+    """
+    M    为 多项式的次数
+    """
+    # 随机初始化多项式参数
+    p_init = np.random.rand(M + 1)
+    # 最小二乘法
+    p_lsq = leastsq(residuals_func, p_init, args=(x, y))
+    print('Fitting Parameters:', p_lsq[0])
 
-'''OLS estimation'''
+    # 可视化
+    plt.plot(x_points, real_func(x_points), label='real')
+    plt.plot(x_points, fit_func(p_lsq[0], x_points), label='fitted curve')
+    plt.plot(x, y, 'bo', label='noise')
+    plt.legend()
+    return p_lsq</code></pre>
 
-nsample = 100
-x = np.linspace(0, 10, nsample)  # 数组：等差数列
-X = np.column_stack((x, x**2))  # 转化数组为矩阵
-beta = np.array([1, 0.1, 10])  # 1*3矩阵
-X = sm.add_constant(X)  # 在 array 上加入一列常项1 注意第一列
-e = np.random.normal(size=nsample)  # 误差项：随机抽取100个服从"标准正态分布"的样本
-y = np.dot(X, beta) + e  # 生成反应项 y(t)
-model = sm.OLS(y, X)  # OLS模型
-results = model.fit()  # 模型拟合
-print('Parameters: ', results.params)  # 回归系数
-print(results.summary())  # 摘要
-print('R2: ', results.rsquared)。
-# 绘图
-fig, ax = plt.subplots(figsize=(8,6))
-y_fitted = results.fittedvalues
-ax.plot(x, y, 'o', label="data")
-ax.plot(x, y_fitted, 'r--.',label='OLS')
-plt.show()
-</code></pre>
+
         </div>
 
         
@@ -304,7 +311,7 @@ plt.show()
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://github.com/junhe-S/junhe-S.github.io/2020/05/31/python-OLS/">https://github.com/junhe-S/junhe-S.github.io/2020/05/31/python-OLS/</a></span>
+                        <span><a href="https://github.com/junhe-S/junhe-S.github.io/2020/06/07/1-Introduction-to-statistical-learning-methods/">https://github.com/junhe-S/junhe-S.github.io/2020/06/07/1-Introduction-to-statistical-learning-methods/</a></span>
                     </p>
                 
                 
@@ -323,7 +330,7 @@ plt.show()
                 <span class="tag">
                     
                     
-                        <a href="/tags/python-OLS/"># python OLS</a>
+                        <a href="/tags/python/"># python</a>
                     
                         
                 </span>
@@ -336,10 +343,8 @@ plt.show()
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/06/01/python-OLS-non-linear/">python_OLS_non_linear</a>
             
-            
-            <a class="next" rel="next" href="/2020/05/31/r-language/">Applied Time Series Analysis (ATSA) with R</a>
+            <a class="next" rel="next" href="/2020/06/01/python-OLS-dummy-variables/">python-OLS_dummy_variables</a>
             
         </section>
 
